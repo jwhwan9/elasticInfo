@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html ng-app="ESApp">
+	<head>
+		<meta charset="utf-8">
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js"></script>
+			<script src="module.js"></script>
+		</head>
+		<body ng-controller="ESCtrl" ng-init="init()">
+			<h2>ES Info</h2>
+		 IP  : <input ng-model="ES_IP">
+		 參數: <input ng-model="ES_Parameter">                
+					<button ng-click="GetES();ES_Action='Generic';">Get ES</button>
+					<br>
+						<button ng-click="GetES_MasterNode();ES_Action='MasterNode';">Master Node</button>		
+						<button ng-click="GetES_NodeStatus();ES_Action='NodeStatus';">Node Status</button>		
+						<button ng-click="GetES_ClusterHealth();ES_Action='ClusterHealth';">Cluster Health</button>
+						<button ng-click="GetES_ClusterState();ES_Action='ClusterState';">Cluster State</button>		
+						<button ng-click="GetES_ClusterStatus();ES_Action='ClusterStatus';">Cluster Index Info</button>		
+						<br>
+						<div ng-show="ES_Action=='NodeStatus'">
+						
+						ES:<font color="blue">{{ES_Result.cluster_name}}</font><br>
+						Cluster Nodes: <font color="green">{{ES_Result._nodes.successful}}</font>/{{ES_Result._nodes.total}}<br>
+						Failed Nodes:<font color="red">{{ES_Result._nodes.failed}}</font><br>
+						
+						<table border="1" cellpadding="0" cellspacing="0">
+									<tr bgcolor="#ADD8E6">										
+										<th>node</th>										
+										<th>node type</th>
+										<th>ip</th>
+										<th>docs</th>
+										<th>data size</th>
+										<th>ram<br>total</th>
+										<th>cpu<br>1 min</th>
+									</tr>
+									<tr ng-repeat="item in ES_Result.nodes">										
+										<td>{{ item.name }}</td>
+										<td>{{ item.roles.join() }}</td>
+										<td>{{ item.ip }}</td>										
+										<td>{{ item.indices.docs.count}}</td>
+										<td>{{ item.indices.store.size_in_bytes | bytes}}</td>
+										<td><font color="blue">{{ item.os.mem.used_percent}}%</font> <br>{{ item.os.mem.total_in_bytes | bytes}}</td>
+										<td title="%<br> {{ item.os.cpu.load_average}}"><font color="blue">{{ item.os.cpu.percent}}%</font><br>{{ item.os.cpu.load_average.1m}}%</td>
+									</tr>
+						</table>
+						</div>
+						<div ng-show="ES_Action=='ClusterHealth'">
+						
+						ES:<font color="blue">{{ES_Result.cluster_name}}</font><br>
+						<table border="1" cellpadding="0" cellspacing="0">
+						<tr bgcolor="#ADD8E6">
+						<th>Cluster Status</th>						
+						<th>ES Nodes</th>
+						<th>Data Nodes</th>
+						<th>Primary<br>Shards</th>
+						<th>Active<br>Shards</th>						
+						
+						<th>in flight<br> fetch</th>
+						<th>pending<br> tasks</th>
+						</tr>
+						<tr>
+						 <td bgcolor="{{ES_Result.status}}"><font color="">{{ES_Result.status}}</font></td>
+						 <td><font color="">{{ES_Result.number_of_nodes}}</font></td>
+						<td><font color="">{{ES_Result.number_of_data_nodes}}</font></td>
+						<td><font color="">{{ES_Result.active_primary_shards}}</font></td>
+						<td><font color="">{{ES_Result.active_shards}}</font></td>
+						
+						<td><font color="">{{ES_Result.number_of_in_flight_fetch}}</font></td>
+						<td><font color="">{{ES_Result.number_of_pending_tasks}}</font></td>
+						</tr>
+						</table>
+
+
+						</div>
+						<div ng-show="ES_Action=='ClusterStatus'">
+		filter:<input type=text placeholder="keyword" ng-model="FilterKeyword">
+								<table border="1" cellpadding="0" cellspacing="0">
+									<tr bgcolor="#ADD8E6">
+										<th></th>
+										<th>index</th>
+										<th>docs#</th>
+										<th>size(bytes)</th>
+										<th>size</th>
+									</tr>
+									<tr bgcolor="#D7E6AC">
+										<td></td>
+										<td>Total</td>
+										<td></td>
+										<td>{{ IndexTotalSize }}</td>
+										<td>{{ IndexTotalSize | bytes}}</td>
+									</tr>
+									<tr ng-repeat="(key, myVal) in myElastFilter(idxStatus)">
+										<td><input type="checkbox" ng-click="myVal.isChecked=!myVal.isChecked;GetAllStoreByte()" ng-checked="myVal.isChecked" /></td>
+
+										<td>{{ key }}</td>
+										<td>{{ myVal.primaries.docs.count }}</td>
+										<td>{{ myVal.primaries.store.size_in_bytes }}</td>
+										<td>{{ myVal.primaries.store.size_in_bytes | bytes}}</td>
+									</tr>
+
+								</table>	
+						</div>								
+								<br>
+									<p id="Resp"
+										</body>
+									</html>
