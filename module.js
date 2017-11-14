@@ -32,13 +32,16 @@ ESApp.controller('ESCtrl', function($scope, $http) {
 		$scope.ES_Parameter="";		
 		$scope.ES_Result=[];
 		$scope.IndexTotalSize=0;
+		$scope.IndexPrimaryTotalSize=0;
 		$scope.FilterKeyword="";
+		$scope.FilterKeyword2="";
 	};	
 	
 	$scope.myElastFilter = function(myItems) {
 		var result = {};
         angular.forEach(myItems, function(value, key) {
-            if ( $scope.FilterKeyword.trim()=="" || key.indexOf($scope.FilterKeyword) !== -1) {
+            if ( ($scope.FilterKeyword.trim()=="" || key.indexOf($scope.FilterKeyword) !== -1) && 
+			($scope.FilterKeyword2.trim()=="" || key.indexOf($scope.FilterKeyword2) !== -1)) {
                 result[key] = value;
             }
         });
@@ -67,8 +70,9 @@ ESApp.controller('ESCtrl', function($scope, $http) {
 			for(var item in $scope.idxStatus) {
 				$scope.idxStatus[item].isChecked= true;
 			}
-			
+						
 			$scope.GetAllStoreByte();
+			
 		
 			// [,"] -> [,<br>"]
 			myResult = myResult.replaceAll(',"',',<br>"');									
@@ -84,17 +88,20 @@ ESApp.controller('ESCtrl', function($scope, $http) {
 	
 	$scope.GetAllStoreByte = function(){
 		var myTotal = 0;
+		var myPrimaryTotal = 0;
 		
 		for(var item in $scope.idxFilterStatus) {
 			if($scope.idxFilterStatus[item].isChecked == true){
 				myTotal = myTotal + $scope.idxFilterStatus[item].total.store.size_in_bytes;
+				myPrimaryTotal = myPrimaryTotal + $scope.idxFilterStatus[item].primaries.store.size_in_bytes;
 			}
 		}
 		$scope.IndexTotalSize = myTotal;
-		
-		return myTotal;
+		$scope.IndexPrimaryTotalSize = myPrimaryTotal;
+				
 	}
 	
+
 	$scope.GetJSONKey = function(Param){
 		return Object.keys(Param);
 	};

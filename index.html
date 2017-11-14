@@ -74,6 +74,7 @@
 						</div>
 						<div ng-show="ES_Action=='ClusterStatus'">
 		filter:<input type=text placeholder="keyword" ng-model="FilterKeyword">
+		filter2:<input type=text placeholder="keyword" ng-model="FilterKeyword2">
 								<table border="1" cellpadding="0" cellspacing="0">
 									<tr bgcolor="#ADD8E6">
 										<th></th>
@@ -81,21 +82,24 @@
 										<th>docs#</th>
 										<th>size(bytes)</th>
 										<th>size</th>
+										<th>size<br>+replica</th>
 									</tr>
 									<tr bgcolor="#D7E6AC">
 										<td></td>
 										<td>Total</td>
 										<td></td>
-										<td>{{ IndexTotalSize }}</td>
-										<td>{{ IndexTotalSize | bytes}}</td>
+										<td>{{ IndexPrimaryTotalSize }}</td>										
+										<td>{{ IndexPrimaryTotalSize | bytes}}</td>
+										<td>{{ IndexTotalSize | bytes}}</td>										
 									</tr>
 									<tr ng-repeat="(key, myVal) in myElastFilter(idxStatus)">
-										<td><input type="checkbox" ng-click="myVal.isChecked=!myVal.isChecked;GetAllStoreByte()" ng-checked="myVal.isChecked" /></td>
+										<td><input type="checkbox" ng-click="myVal.isChecked=!myVal.isChecked;GetAllStoreByte();" ng-checked="myVal.isChecked" /></td>
 
 										<td>{{ key }}</td>
 										<td>{{ myVal.primaries.docs.count }}</td>
 										<td>{{ myVal.primaries.store.size_in_bytes }}</td>
 										<td>{{ myVal.primaries.store.size_in_bytes | bytes}}</td>
+										<td>{{ myVal.total.store.size_in_bytes | bytes}}</td>
 									</tr>
 
 								</table>	
